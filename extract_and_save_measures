@@ -1,0 +1,39 @@
+## Install music21 library if don't have, update package manager/installer accordingly
+#conda install --y music21
+
+from music21 import converter, stream
+
+def extract_and_save_measures(input_file, measure_ranges):
+    """Input:
+        input_file: MusicXML file of song
+        measure_ranges: currently list of (start, end) tuple of measures
+
+       Output:
+        Returns: None
+        Saves each range into its own MusicXML file
+    """
+    # Load the MusicXML file
+    score = converter.parse(input_file)
+    
+    # Loop through the measure ranges and extract the corresponding measures
+    for idx, (start, end) in enumerate(measure_ranges):
+        new_score = stream.Score()  # Create a new score for each range
+        
+        for part in score.parts:
+            new_part = stream.Part(id=part.id)  # Create a new part
+            # Extract the desired range of measures from the part
+            measures = part.getElementsByClass(stream.Measure)[start-1:end]
+            for measure in measures:
+                new_part.append(measure)  # Add the measure to the new part
+            new_score.append(new_part)  # Add the new part to the new score
+        
+        # Write the new score to a MusicXML file (unique name for each range)
+        output_file = f"{input_file.split('.')[0]}_{idx}.xml"
+        new_score.write('musicxml', fp=output_file)
+        print(f"Saved {output_file}")
+
+
+## Example usage:
+## Define the measure ranges (e.g., measures 1-6, 7-12, etc.)
+##measure_ranges = [(1, 6), (7, 12)]
+##extract_and_save_measures('accidentals - Full score - 01 accidentals.xml', measure_ranges)
