@@ -1,0 +1,13 @@
+name: final-proj
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python==3.12
+  - pip
+  - ipykernel
+  - numpy
+  - pandas
+  - pip:
+    - py_midicsv
+    - pretty_midi
